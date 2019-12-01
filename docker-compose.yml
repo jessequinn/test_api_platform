@@ -4,11 +4,16 @@ services:
   php:
     build:
       context: ./api
+      dockerfile: Dockerfile
       target: api_platform_php_dev
-      cache_from:
-        - php:7.3-fpm-alpine
       args:
         PHP_VERSION: 7.3
+        APCU_VERSION: 5.1.18
+        NGINX_VERSION: 1.17
+        VARNISH_VERSION: 6.3
+        XDEBUG_VERSION: 2.7.2
+      cache_from:
+        - php:7.3-fpm-alpine
     environment:
       # See https://docs.docker.com/docker-for-mac/networking/#i-want-to-connect-from-a-container-to-a-service-on-the-host
       # See https://github.com/docker/for-linux/issues/264
@@ -38,11 +43,16 @@ services:
   api:
     build:
       context: ./api
+      dockerfile: Dockerfile
       target: api_platform_nginx
       cache_from:
         - nginx:1.17-alpine
       args:
+        PHP_VERSION: 7.3
+        APCU_VERSION: 5.1.18
         NGINX_VERSION: 1.17
+        VARNISH_VERSION: 6.3
+        XDEBUG_VERSION: 2.7.2
     depends_on:
       - php
     volumes:
@@ -101,7 +111,11 @@ services:
   client:
     build:
       context: ./client
+      dockerfile: Dockerfile
       target: api_platform_client_development
+      args:
+        NODE_VERSION: 13
+        NGINX_VERSION: 1.17
     environment:
       - API_PLATFORM_CLIENT_GENERATOR_ENTRYPOINT=http://api
       - API_PLATFORM_CLIENT_GENERATOR_OUTPUT=src
@@ -118,10 +132,11 @@ services:
   admin:
     build:
       context: ./admin
+      dockerfile: Dockerfile
       target: api_platform_admin_development
-#      cache_from:
-#        - ${ADMIN_IMAGE:-quay.io/api-platform/admin}
-#    image: ${ADMIN_IMAGE:-quay.io/api-platform/admin}
+      args:
+        NODE_VERSION: 13
+        NGINX_VERSION: 1.17
     depends_on:
       - dev-tls
     volumes:
@@ -135,6 +150,9 @@ services:
   dev-tls:
     build:
       context: ./docker/dev-tls
+      args:
+        NGINX_VERSION: 1.17
+        MKCERT_VERSION: 1.4.1
     volumes:
       - dev-certs:/certs:rw
     ports:

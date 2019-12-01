@@ -2,7 +2,7 @@
 
 
 # https://docs.docker.com/engine/reference/builder/#understand-how-arg-and-from-interact
-ARG NGINX_VERSION=1.17
+ARG NGINX_VERSION
 
 
 FROM nginx:${NGINX_VERSION}-alpine
@@ -14,7 +14,7 @@ RUN apk add --no-cache \
 
 WORKDIR /certs
 
-ARG MKCERT_VERSION=1.4.1
+ARG MKCERT_VERSION
 RUN set -eux; \
 	wget -O /usr/local/bin/mkcert https://github.com/FiloSottile/mkcert/releases/download/v$MKCERT_VERSION/mkcert-v$MKCERT_VERSION-linux-amd64; \
 	chmod +x /usr/local/bin/mkcert; \

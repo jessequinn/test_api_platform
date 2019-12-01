@@ -6,7 +6,7 @@
 # https://docs.docker.com/engine/reference/builder/#understand-how-arg-and-from-interact
 ARG PHP_VERSION
 ARG NGINX_VERSION
-ARG VARNISH_VERSION=6.3
+ARG VARNISH_VERSION
 
 
 # "php" stage
@@ -21,7 +21,7 @@ RUN apk add --no-cache \
 		git \
 	;
 
-ARG APCU_VERSION=5.1.18
+ARG APCU_VERSION
 RUN set -eux; \
 	apk add --no-cache --virtual .build-deps \
 		$PHPIZE_DEPS \
@@ -138,13 +138,14 @@ COPY docker/varnish/conf/default.vcl /etc/varnish/default.vcl
 
 CMD ["varnishd", "-F", "-f", "/etc/varnish/default.vcl", "-p", "http_resp_hdr_len=65536", "-p", "http_resp_size=98304"]
 
-# XDebug support
+
+# "xdebug" stage
+# depends on the "php" stage above
 FROM api_platform_php as api_platform_php_dev
 
-ARG XDEBUG_VERSION=2.7.2
+ARG XDEBUG_VERSION
 RUN set -eux; \
 	apk add --no-cache --virtual .build-deps $PHPIZE_DEPS; \
 	pecl install xdebug-$XDEBUG_VERSION; \
 	docker-php-ext-enable xdebug; \
 	apk del .build-deps
-
