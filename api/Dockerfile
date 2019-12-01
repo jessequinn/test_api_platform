@@ -80,8 +80,8 @@ ENV PATH="${PATH}:/root/.composer/vendor/bin"
 
 WORKDIR /srv/api
 
-# build for production
-ARG APP_ENV=prod
+# build for production/dev
+ARG APP_ENV
 
 # prevent the reinstallation of vendors at every changes in the source code
 COPY composer.json composer.lock symfony.lock ./
@@ -149,3 +149,7 @@ RUN set -eux; \
 	pecl install xdebug-$XDEBUG_VERSION; \
 	docker-php-ext-enable xdebug; \
 	apk del .build-deps
+
+RUN rm $PHP_INI_DIR/php.ini
+RUN ln -s $PHP_INI_DIR/php.ini-development $PHP_INI_DIR/php.ini
+COPY docker/php/conf.d/api-platform.dev.ini $PHP_INI_DIR/conf.d/api-platform.ini

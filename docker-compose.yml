@@ -5,13 +5,14 @@ services:
     build:
       context: ./api
       dockerfile: Dockerfile
-      target: api_platform_php_dev
+      target: api_platform_php
       args:
         PHP_VERSION: 7.3
         APCU_VERSION: 5.1.18
         NGINX_VERSION: 1.17
         VARNISH_VERSION: 6.3
         XDEBUG_VERSION: 2.7.2
+        APP_ENV: prod
       cache_from:
         - php:7.3-fpm-alpine
     environment:
@@ -36,9 +37,6 @@ services:
       - db
     volumes:
       - ./api:/srv/api:rw,cached
-      - ./api/docker/php/conf.d/api-platform.dev.ini/:/usr/local/etc/php/conf.d/api-platform.ini
-      # if you develop on Linux, you may use a bind-mounted host directory instead
-      # - ./api/var:/srv/api/var:rw
 
   api:
     build:
@@ -53,6 +51,7 @@ services:
         NGINX_VERSION: 1.17
         VARNISH_VERSION: 6.3
         XDEBUG_VERSION: 2.7.2
+        APP_ENV: prod
     depends_on:
       - php
     volumes:
