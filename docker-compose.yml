@@ -1,11 +1,5 @@
 version: '3.4'
 
-#x-cache-from:
-#  - &api-cache-from
-#    cache_from:
-#      - ${NGINX_IMAGE:-quay.io/api-platform/nginx}
-#      - ${PHP_IMAGE:-quay.io/api-platform/php}
-
 services:
   php:
     build:
@@ -15,8 +9,7 @@ services:
         PHP_VERSION: 7.3
         NGINX_VERSION: 1.17
         VARNISH_VERSION: 6.3
-#      <<: *api-cache-from
-#    image: ${PHP_IMAGE:-quay.io/api-platform/php}
+
 #    environment:
 #      # See https://docs.docker.com/docker-for-mac/networking/#i-want-to-connect-from-a-container-to-a-service-on-the-host
 #      # See https://github.com/docker/for-linux/issues/264
@@ -47,8 +40,10 @@ services:
     build:
       context: ./api
       target: api_platform_nginx
-#      <<: *api-cache-from
-#    image: ${NGINX_IMAGE:-quay.io/api-platform/nginx}
+      args:
+        PHP_VERSION: 7.3
+        NGINX_VERSION: 1.17
+        VARNISH_VERSION: 6.3
     depends_on:
       - php
     volumes:
